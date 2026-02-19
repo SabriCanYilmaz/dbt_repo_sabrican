@@ -1,15 +1,14 @@
-
-sources :
-  - name : raw
-    schema : gz_raw_data
-    tables :
+sources:
+  - name: raw
+    schema: gz_raw_data
+    tables:
       - name: sales
         identifier: raw_gz_sales
         description: sales of Greenweez / we have one row per product_id found in each orders_id
         # Freshness testing
         loaded_at_field: "CAST(date_date AS TIMESTAMP)"
         freshness:
-          warn_after: {count: 90, period: day}
+          warn_after: { count: 90, period: day }
         columns:
           - name: date_date
             description: date of purchase
@@ -50,3 +49,54 @@ sources :
           - name: ship_cost
             description: shipping cost paid by Greenweez to the carrier/logistics provider
 
+version: 2
+
+models:
+  - name: finance_days
+    description: >
+      Daily finance mart table used for the finance team's dashboard.
+      Granularity: one row per day.
+      Aggregated from int_orders_operational model.
+
+    columns:
+      - name: date_date
+        description: "Transaction date (daily granularity)."
+        tests:
+          - not_null
+          - unique
+
+      - name: total_transactions
+        description: "Number of distinct orders per day."
+        tests:
+          - not_null
+
+      - name: total_revenue
+        description: "Total revenue generated per day."
+        tests:
+          - not_null
+
+      - name: avg_basket
+        description: "Average basket value per day (revenue / transactions)."
+
+      - name: total_margin
+        description: "Total margin per day (revenue - purchase_cost)."
+
+      - name: total_operational_margin
+        description: >
+          Operational margin calculated as:
+          margin + shipping_fee - (logcost + ship_cost).
+
+      - name: total_purchase_cost
+        description: "Total product purchase cost per day."
+
+      - name: total_shipping_fee
+        description: "Total shipping fees charged to customers per day."
+
+      - name: total_logistics_cost
+        description: "Total logistics cost per day."
+
+      - name: total_ship_cost
+        description: "Total shipping operational cost per day."
+
+      - name: total_quantity
+        description: "Total quantity of items sold per day."
