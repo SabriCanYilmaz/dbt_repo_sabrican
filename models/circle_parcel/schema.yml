@@ -1,0 +1,40 @@
+sources:
+  - name: raw
+    schema: wt_dbt_tekrar
+    tables:
+      - name: parcel
+        identifier : raw_cc_parcel
+        columns:
+          - name: parcel_id
+            tests:
+              - unique
+              - not_null
+              
+      - name: parcel_product
+        identifier: raw_cc_parcel_product
+        columns:
+          - name: parcel_id
+            tests:
+             - not_null
+              
+models:
+  - name: cc_parcel
+    description: cc parcel products model
+      
+
+    columns:
+      - name: parcel_id
+        description: cc parcel products model
+        tests:
+          - not_null
+          - unique
+  - name: cc_parcel_products
+    description: cc parcel products model
+    columns:
+      - name: parcel_id
+        tests:
+          - not_null
+
+          
+       
+
